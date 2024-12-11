@@ -160,21 +160,19 @@ void LaunchAndControlConsoleApp(bool load) {
     if (load)
     {
         char szcharBuff[512];
+        WriteFile(hWritePipe, ("setopt opt.bin\n"), 15, &bytesWritten, NULL);
+        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
         WriteFile(hWritePipe, ("erase\n"), 6, &bytesWritten, NULL);
         WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
         sprintf_s(szcharBuff, "loadbin %s 0x08000000\n", (converter.to_bytes(std::wstring(szSelectedFile))).c_str());
         WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
         WriteFile(hWritePipe, szcharBuff, strlen(szcharBuff), &bytesWritten, NULL);
         WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
-        WriteFile(hWritePipe, ("mem32 0x0800FFFC 1\n"), 19, &bytesWritten, NULL);
-        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
     }
 
-    WriteFile(hWritePipe, ("mem32 0x0800FFFC 1\n"), 19, &bytesWritten, NULL);
+    WriteFile(hWritePipe, ("mem32 0x0800FFF8 2\n"), 19, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("savebin temp.bin 0x0800FFF8 8\n"), 30, &bytesWritten, NULL);
-    WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
-    WriteFile(hWritePipe, ("mem32 0x0800FFF8 1\n"), 19, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("q\n"), 2, &bytesWritten, NULL);
 
