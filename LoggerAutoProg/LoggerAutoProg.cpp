@@ -156,24 +156,23 @@ void LaunchAndControlConsoleApp(bool load) {
     char buffer[128];
 
     //WriteFile(hWritePipe, ("r\n"), 2, &bytesWritten, NULL);
-    WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+    WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
     if (load)
     {
         char szcharBuff[512];
+        sprintf_s(szcharBuff, "load %s 0x08000000\n", (converter.to_bytes(std::wstring(szSelectedFile))).c_str());
         WriteFile(hWritePipe, ("setopt opt.bin\n"), 15, &bytesWritten, NULL);
-        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+        WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
         WriteFile(hWritePipe, ("erase\n"), 6, &bytesWritten, NULL);
-        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
-        sprintf_s(szcharBuff, "loadbin %s 0x08000000\n", (converter.to_bytes(std::wstring(szSelectedFile))).c_str());
-        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+        WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
         WriteFile(hWritePipe, szcharBuff, strlen(szcharBuff), &bytesWritten, NULL);
-        WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+        WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
     }
 
     WriteFile(hWritePipe, ("mem32 0x0800FFF8 2\n"), 19, &bytesWritten, NULL);
-    WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+    WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("savebin temp.bin 0x0800FFF8 8\n"), 30, &bytesWritten, NULL);
-    WriteFile(hWritePipe, ("sleep 250\n"), 10, &bytesWritten, NULL);
+    WriteFile(hWritePipe, ("sleep 50\n"), 9, &bytesWritten, NULL);
     WriteFile(hWritePipe, ("q\n"), 2, &bytesWritten, NULL);
 
     // simulate infinity loop
@@ -719,7 +718,10 @@ bool CheckTempFileValid(bool bFinalCheck)
     {
         wsprintf(szConnectionStatus, L"Микроконтроллер имеет какую-то левую прошивку, сигнатура не совпадает");
         if (bFinalCheck)
+        {
+            CloseHandle(hFile);
             return false;
+        }
     }
 
     if (bFinalCheck)
@@ -727,6 +729,7 @@ bool CheckTempFileValid(bool bFinalCheck)
         if (*(unsigned int*)byte != logger_id)
         {
             wsprintf(szConnectionStatus, L"Проблема с прошивкой: id не совпал после проверки: bin %i, device %i", logger_id, *(unsigned int*)byte);
+            CloseHandle(hFile);
             return false;
         }
     }
